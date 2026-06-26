@@ -1,12 +1,11 @@
-# VPN L2TP/IPSec IKEv1 - Linux Client-to-Site
+# VPN L2TP/IPSec IKEv1 Client-to-Site con Cliente Linux
 
 <p align="center">
-  <img src="https://img.shields.io/badge/GNS3-Lab-2ea44f?style=for-the-badge&logo=gns3&logoColor=white" />
-  <img src="https://img.shields.io/badge/Cisco-IOS-blue?style=for-the-badge&logo=cisco&logoColor=white" />
-  <img src="https://img.shields.io/badge/Kali-Linux-557C94?style=for-the-badge&logo=kalilinux&logoColor=white" />
-  <img src="https://img.shields.io/badge/VPN-L2TP%2FIPSec-orange?style=for-the-badge&logo=strongswan&logoColor=white" />
-  <img src="https://img.shields.io/badge/IKE-IKEv1-red?style=for-the-badge&logo=letsencrypt&logoColor=white" />
-  <img src="https://img.shields.io/badge/Modelo-Client--to--Site-purple?style=for-the-badge&logo=securityscorecard&logoColor=white" />
+  <img src="https://img.shields.io/badge/Plataforma-GNS3-blue?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/VPN-L2TP%2FIPSec-orange?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/IKE-IKEv1-red?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Cliente-Kali%20Linux-557C94?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Modelo-Client--to--Site-success?style=for-the-badge" />
 </p>
 
 <p align="center">
@@ -15,136 +14,132 @@
 
 ---
 
-## Informacion del proyecto
+## Datos del proyecto
 
 | Campo | Detalle |
 |---|---|
-| Autor | Michael David Robles Fermin |
-| Matricula | 2025-0845 |
+| Autor | Michael David Robles Fermín |
+| Matrícula | 2025-0845 |
 | Asignatura | Seguridad de Redes |
-| Practica | VPN Client-to-Site L2TP/IPSec IKEv1 |
-| Cliente VPN | Kali Linux |
+| Práctica | VPN Client-to-Site L2TP/IPSec IKEv1 |
 | Servidor VPN | R1-L2TP-SERVER |
+| Cliente VPN | Kali Linux |
 | Repositorio | https://github.com/iClexi/VPN-L2TP-LinuxClient-IKEv1-IPSec |
 | Video | https://youtu.be/Fu7Mby9g2_E |
 
-## Documentacion tecnica profesional
+---
 
-La documentacion tecnica profesional esta ubicada en la carpeta [`docs/`](docs/):
+## Documentación técnica
 
-| Archivo | Descripcion |
-|---|---|
-| [`docs/Documentacion Tecnica Profesional.pdf`](docs/Documentacion%20Tecnica%20Profesional.pdf) | Documento tecnico profesional completo en PDF. |
-| [`docs/Documentacion Tecnica Profesional.docx`](docs/Documentacion%20Tecnica%20Profesional.docx) | Version editable del documento tecnico. |
+La documentación técnica profesional está en:
 
-## Descripcion general
+[`docs/Documentacion Tecnica Profesional.pdf`](docs/Documentacion%20Tecnica%20Profesional.pdf)
 
-Este laboratorio configura una VPN **Client-to-Site punto a multipunto** usando **L2TP sobre IPSec con IKEv1**. Kali Linux representa un cliente remoto fuera de la LAN interna, mientras que R1 funciona como servidor VPN.
+También se incluye la versión editable:
 
-El objetivo es que Kali, desde la red externa `20.25.8.48/30`, pueda autenticarse contra R1, levantar IPSec, crear una sesion L2TP/PPP, recibir una IP del pool VPN y acceder a la LAN interna `192.168.45.0/24`.
+[`docs/Documentacion Tecnica Profesional.docx`](docs/Documentacion%20Tecnica%20Profesional.docx)
 
-## Topologia y objetivo
+---
 
-<p align="center">
-  <img src="images/01_topologia_completa.png" alt="Topologia completa" width="900">
-</p>
+## Descripción general
 
-La topologia tiene a Kali como cliente remoto, ISP como red externa simulada, R1 como servidor VPN, SW1 como switch interno y PC1 como host final de la LAN. La prueba principal consiste en llegar desde Kali hacia `192.168.45.10` usando la VPN.
+Esta práctica implementa una VPN **Client-to-Site punto a multipunto** utilizando **L2TP sobre IPSec con IKEv1**. El router R1 funciona como servidor VPN y Kali Linux funciona como cliente remoto. El objetivo es que Kali, estando fuera de la red interna, pueda autenticarse por VPN y acceder a la LAN `192.168.45.0/24`.
 
-```text
-Kali Linux Cliente VPN ---- ISP ---- R1-L2TP-SERVER ---- SW1 ---- PC1 LAN
-```
+L2TP crea el túnel lógico del cliente remoto, PPP autentica el usuario y crea la interfaz `ppp0`, mientras que IPSec protege el tráfico L2TP mediante IKEv1.
 
-## Direccionamiento e interfaces
+---
 
-| Equipo | Interfaz | IP | Gateway |
-|---|---:|---:|---:|
-| Kali Linux | eth0 | 20.25.8.50/30 | 20.25.8.49 |
-| ISP | Gi0/1 | 20.25.8.49/30 | N/A |
-| ISP | Gi0/0 | 20.25.8.45/30 | N/A |
-| R1-L2TP-SERVER | Gi0/0 | 20.25.8.46/30 | 20.25.8.45 |
-| R1-L2TP-SERVER | Gi0/1 | 192.168.45.1/24 | N/A |
-| PC1 | eth0 | 192.168.45.10/24 | 192.168.45.1 |
-| Kali VPN | ppp0 | 192.168.84.101 | peer 192.168.45.1 |
+## Topología
 
 <p align="center">
-  <img src="images/02_r1_show_ip_interface_brief.png" alt="show ip interface brief R1" width="850">
+  <img src="images/01_topologia_completa.png" alt="Topología VPN L2TP IPSec IKEv1" width="900">
 </p>
 
-En R1 se observan las interfaces WAN y LAN activas, ademas de interfaces Virtual-Access generadas por la sesion L2TP. Esto confirma que el servidor crea interfaces virtuales cuando el cliente remoto se conecta.
+La topología usa a Kali como cliente externo, el ISP como red pública simulada, R1 como servidor VPN y una PC interna detrás del switch SW1. La prueba final consiste en que Kali llegue a `192.168.45.10`, que está dentro de la LAN privada.
 
-## Parametros VPN
+### Conexiones principales
 
-| Parametro | Valor |
+| Desde | Interfaz | Hacia | Interfaz |
+|---|---:|---|---:|
+| Kali Linux | eth0 | ISP | Gi0/1 |
+| ISP | Gi0/0 | R1-L2TP-SERVER | Gi0/0 |
+| R1-L2TP-SERVER | Gi0/1 | SW1 | Gi0/0 |
+| SW1 | Gi0/1 | PC1 | eth0 |
+
+---
+
+## Direccionamiento
+
+| Equipo | Interfaz | IP | Función |
+|---|---:|---:|---|
+| Kali Linux | eth0 | 20.25.8.50/30 | Cliente externo |
+| ISP | Gi0/1 | 20.25.8.49/30 | Gateway de Kali |
+| ISP | Gi0/0 | 20.25.8.45/30 | Gateway WAN de R1 |
+| R1-L2TP-SERVER | Gi0/0 | 20.25.8.46/30 | WAN del servidor VPN |
+| R1-L2TP-SERVER | Gi0/1 | 192.168.45.1/24 | Gateway de la LAN interna |
+| PC1 | eth0 | 192.168.45.10/24 | Host interno |
+| Kali Linux | ppp0 | 192.168.84.101 | IP recibida por VPN |
+
+---
+
+## Parámetros usados
+
+| Parámetro | Valor |
 |---|---|
 | Tipo de VPN | Client-to-Site |
 | Modelo | Punto a multipunto |
-| Protocolo VPN | L2TP sobre IPSec |
-| IKE | IKEv1 |
-| Cliente | Kali Linux |
-| Servidor | R1-L2TP-SERVER |
-| PSK IPSec | ITLA20250845 |
-| Usuario PPP | michael |
-| Password PPP | L2TP20250845 |
+| Protocolo de túnel | L2TP |
+| Protección | IPSec |
+| Negociación | IKEv1 |
+| Autenticación IPSec | Pre-shared key |
+| PSK | ITLA20250845 |
+| Usuario VPN | michael |
+| Contraseña VPN | L2TP20250845 |
 | Pool VPN | 192.168.84.100 - 192.168.84.150 |
 | IP recibida por Kali | 192.168.84.101 |
 | Transform-set | L2TP-3DES |
+| Modo IPSec | Transport |
 | Crypto map | L2TP-MAP |
 | Dynamic map | L2TP-DYNAMIC |
-| Modo IPSec | Transport |
 
-## Por que es punto a multipunto
+---
 
-Aunque en la demostracion se conecta un solo cliente Kali, la configuracion de R1 esta preparada para varios clientes remotos. Esto se logra usando un pool de direcciones, VPDN, Virtual-Template y dynamic crypto map.
+## Funcionamiento de la VPN
 
-```cisco
-ip local pool L2TP-POOL 192.168.84.100 192.168.84.150
-crypto dynamic-map L2TP-DYNAMIC 10
-vpdn-group L2TP-GROUP
-interface Virtual-Template1
-```
+R1 actúa como concentrador VPN. Primero autentica al cliente mediante IKEv1 e IPSec usando la clave precompartida `ITLA20250845`. Después L2TP crea el túnel lógico y PPP autentica al usuario `michael`. Al conectarse, Kali recibe una IP del pool `192.168.84.100 - 192.168.84.150` y se crea la interfaz `ppp0`.
 
-El pool puede entregar IPs diferentes a varios clientes. La Virtual-Template crea interfaces Virtual-Access dinamicamente. El dynamic crypto map permite recibir clientes sin fijar una IP remota especifica.
+La práctica es punto a multipunto porque R1 no está limitado a un solo cliente. El servidor usa un pool de direcciones, VPDN, Virtual-Template y dynamic crypto map, permitiendo aceptar múltiples clientes remotos autorizados.
 
-## R1 como servidor VPN
+---
 
-R1 cumple el rol de concentrador VPN. Primero autentica usuarios mediante AAA y PPP, luego entrega IPs desde el pool y acepta sesiones L2TP mediante VPDN.
+## Configuración principal en R1
 
-Bloques principales de la configuracion VPN en R1:
+La configuración completa está en [`configs/R1-L2TP-SERVER.cfg`](configs/R1-L2TP-SERVER.cfg). La parte más importante del servidor VPN incluye AAA, VPDN, Virtual-Template, IKEv1, IPSec y el crypto map aplicado en la WAN.
 
 ```cisco
 aaa new-model
+
 aaa authentication ppp L2TP-AUTH local
 aaa authorization network L2TP-AUTH local
 username michael password 0 L2TP20250845
-ip local pool L2TP-POOL 192.168.84.100 192.168.84.150
-```
 
-```cisco
+ip local pool L2TP-POOL 192.168.84.100 192.168.84.150
+
 vpdn enable
 vpdn-group L2TP-GROUP
  accept-dialin
   protocol l2tp
   virtual-template 1
  no l2tp tunnel authentication
-```
 
-```cisco
 interface Virtual-Template1
+ description CLIENTES-L2TP-IPSEC
  ip unnumbered GigabitEthernet0/1
  peer default ip address pool L2TP-POOL
  ppp authentication ms-chap-v2 L2TP-AUTH
  ppp ipcp dns 8.8.8.8
  ip tcp adjust-mss 1360
-```
 
-La Virtual-Template funciona como una plantilla. Cuando Kali se conecta, R1 crea una interfaz Virtual-Access basada en esta plantilla. El cliente recibe una IP del pool y se autentica con el usuario local `michael`.
-
-## IKEv1 e IPSec en R1
-
-IKEv1 negocia la seguridad inicial. IPSec protege el trafico L2TP usando ESP en modo transport. Se usa transport mode porque L2TP crea el tunel logico y IPSec protege ese trafico.
-
-```cisco
 crypto isakmp policy 10
  encr 3des
  hash sha
@@ -163,89 +158,101 @@ crypto dynamic-map L2TP-DYNAMIC 10
  set security-association lifetime seconds 3600
 
 crypto map L2TP-MAP 10 ipsec-isakmp dynamic L2TP-DYNAMIC
-```
 
-El crypto map se aplica en la interfaz WAN de R1:
-
-```cisco
 interface GigabitEthernet0/0
  crypto map L2TP-MAP
 ```
 
-<p align="center">
-  <img src="images/03_r1_show_crypto_isakmp_sa.png" alt="show crypto isakmp sa" width="850">
-</p>
+AAA y el usuario local permiten autenticar al cliente L2TP mediante PPP. El pool entrega direcciones a los clientes remotos. VPDN habilita L2TP, y la Virtual-Template crea dinámicamente interfaces Virtual-Access para cada cliente conectado.
 
-El estado `QM_IDLE` confirma que IKEv1 completo la negociacion correctamente entre R1 y Kali.
+---
 
-<p align="center">
-  <img src="images/04_r1_show_crypto_ipsec_sa_parte1.png" alt="show crypto ipsec sa parte 1" width="850">
-</p>
+## Configuración principal en Kali Linux
 
-En `show crypto ipsec sa` se observan paquetes encapsulados y desencapsulados. Esto demuestra que IPSec esta protegiendo trafico.
+La configuración completa está en [`configs/KALI-LINUX-CLIENT.cfg`](configs/KALI-LINUX-CLIENT.cfg). En Kali se usan tres componentes: strongSwan para IPSec/IKEv1, xl2tpd para L2TP y PPP para la autenticación del usuario.
 
-<p align="center">
-  <img src="images/05_r1_show_crypto_ipsec_sa_parte2.png" alt="show crypto ipsec sa parte 2" width="850">
-</p>
+```bash
+sudo ipsec up L2TP-IPSEC-R1
+sudo systemctl restart xl2tpd
+echo "c R1-L2TP" | sudo tee /var/run/xl2tpd/l2tp-control
+ip addr show ppp0
+sudo ip route replace 192.168.45.0/24 dev ppp0
+ping -c 4 192.168.45.10
+```
 
-Aqui se observan asociaciones de seguridad entrantes y salientes con transform-set ESP 3DES/SHA.
+Cuando la conexión sube, Kali recibe una interfaz `ppp0` con IP del pool VPN. Esa interfaz se usa para llegar a la red interna `192.168.45.0/24`.
 
-<p align="center">
-  <img src="images/06_r1_show_crypto_ipsec_sa_parte3.png" alt="show crypto ipsec sa parte 3" width="850">
-</p>
+---
 
-El estado `ACTIVE(ACTIVE)` confirma que las SAs IPSec estan operativas.
+## Verificación técnica integrada
 
-## L2TP y VPDN activos
-
-<p align="center">
-  <img src="images/07_r1_show_vpdn_tunnel.png" alt="show vpdn tunnel" width="850">
-</p>
-
-`show vpdn tunnel` muestra el tunel L2TP establecido entre R1 y Kali.
+### Estado general de R1
 
 <p align="center">
-  <img src="images/08_r1_show_vpdn_session.png" alt="show vpdn session" width="850">
+  <img src="images/02_r1_show_ip_interface_brief.png" alt="show ip interface brief en R1" width="900">
 </p>
 
-`show vpdn session` muestra la sesion activa del usuario `michael`, asociada a una interfaz Virtual-Access. Esto confirma que L2TP/PPP autentico el cliente.
+El comando `show ip interface brief` confirma que R1 tiene activas la WAN `20.25.8.46`, la LAN `192.168.45.1` y las interfaces Virtual-Access creadas por la conexión L2TP.
 
-## Kali como cliente VPN
-
-Kali usa `strongSwan` para IPSec/IKEv1, `xl2tpd` para L2TP y `ppp` para autenticacion y creacion de `ppp0`.
-
-Archivos principales en Kali:
-
-- `/etc/ipsec.conf`: define IKEv1, modo transport, IP local, IP remota y algoritmos.
-- `/etc/ipsec.secrets`: guarda la PSK `ITLA20250845`.
-- `/etc/xl2tpd/xl2tpd.conf`: apunta L2TP hacia R1.
-- `/etc/ppp/options.l2tpd.client`: define usuario, password y opciones PPP.
+### Negociación IKEv1
 
 <p align="center">
-  <img src="images/09_kali_ip_route.png" alt="ip route en Kali" width="850">
+  <img src="images/03_r1_show_crypto_isakmp_sa.png" alt="show crypto isakmp sa en R1" width="900">
 </p>
 
-La ruta `192.168.45.0/24 dev ppp0` confirma que Kali envia el trafico hacia la LAN interna por la VPN.
+La salida muestra el estado `QM_IDLE`, lo que confirma que IKEv1 negoció correctamente entre Kali y R1.
+
+### Protección IPSec
 
 <p align="center">
-  <img src="images/10_kali_ping_pc_lan.png" alt="Ping Kali a PC interna" width="850">
+  <img src="images/04_r1_show_crypto_ipsec_sa_parte1.png" alt="show crypto ipsec sa parte 1" width="900">
 </p>
 
-El ping hacia `192.168.45.10` demuestra que Kali, estando fuera de la LAN, pudo acceder a la PC interna mediante L2TP/IPSec.
+La salida muestra paquetes encapsulados y desencapsulados. Esto demuestra que IPSec está protegiendo tráfico entre `20.25.8.46` y `20.25.8.50`.
 
-## Archivos de configuracion
+<p align="center">
+  <img src="images/05_r1_show_crypto_ipsec_sa_parte2.png" alt="show crypto ipsec sa parte 2" width="900">
+</p>
 
-Todas las configuraciones estan en la carpeta [`configs/`](configs/) y usan extension `.cfg`.
+Aquí se observan asociaciones IPSec entrantes y salientes en estado activo, usando ESP con 3DES y SHA-HMAC en modo transport.
 
-| Equipo | Archivo | Descripcion |
-|---|---|---|
-| R1-L2TP-SERVER | [`configs/R1-L2TP-SERVER.cfg`](configs/R1-L2TP-SERVER.cfg) | Servidor L2TP/IPSec IKEv1 completo |
-| ISP | [`configs/ISP.cfg`](configs/ISP.cfg) | Router ISP con enlaces WAN |
-| SW1 | [`configs/SW1.cfg`](configs/SW1.cfg) | Switch IOSvL2 de la LAN interna |
-| PC1-LAN | [`configs/PC1-LAN.cfg`](configs/PC1-LAN.cfg) | IP estatica del VPCS interno |
-| Kali Linux | [`configs/KALI-LINUX-CLIENT.cfg`](configs/KALI-LINUX-CLIENT.cfg) | Cliente Linux con strongSwan, xl2tpd y PPP |
+<p align="center">
+  <img src="images/06_r1_show_crypto_ipsec_sa_parte3.png" alt="show crypto ipsec sa parte 3" width="900">
+</p>
 
-## Comandos de verificacion
+Esta continuación confirma que existen SAs activas para proteger el tráfico L2TP sobre IPSec.
+
+### Túnel y sesión L2TP
+
+<p align="center">
+  <img src="images/07_r1_show_vpdn_tunnel.png" alt="show vpdn tunnel en R1" width="900">
+</p>
+
+`show vpdn tunnel` muestra el túnel L2TP establecido con el cliente Kali desde `20.25.8.50`.
+
+<p align="center">
+  <img src="images/08_r1_show_vpdn_session.png" alt="show vpdn session en R1" width="900">
+</p>
+
+`show vpdn session` confirma la sesión L2TP activa del usuario `michael`, asociada a una interfaz Virtual-Access.
+
+### Ruta y conectividad desde Kali
+
+<p align="center">
+  <img src="images/09_kali_ip_route.png" alt="ip route en Kali" width="900">
+</p>
+
+La tabla de rutas de Kali muestra la ruta hacia `192.168.45.0/24` por `ppp0`. Esto significa que el tráfico hacia la LAN interna viaja por la VPN.
+
+<p align="center">
+  <img src="images/10_kali_ping_pc_lan.png" alt="ping desde Kali hacia PC LAN" width="900">
+</p>
+
+El ping desde Kali hacia `192.168.45.10` confirma que el cliente remoto accede correctamente a la PC interna mediante L2TP/IPSec.
+
+---
+
+## Comandos de verificación
 
 En R1:
 
@@ -254,7 +261,6 @@ show crypto isakmp sa
 show crypto ipsec sa
 show vpdn tunnel
 show vpdn session
-show users
 show ip interface brief
 ```
 
@@ -264,10 +270,25 @@ En Kali:
 sudo ipsec statusall
 ip addr show ppp0
 ip route
-ip route get 192.168.45.10
 ping -c 4 192.168.45.1
 ping -c 4 192.168.45.10
 ```
+
+---
+
+## Archivos de configuración
+
+Las configuraciones completas están en la carpeta [`configs/`](configs/) con extensión `.cfg`.
+
+| Archivo | Descripción |
+|---|---|
+| [`configs/R1-L2TP-SERVER.cfg`](configs/R1-L2TP-SERVER.cfg) | Configuración completa del servidor VPN |
+| [`configs/ISP.cfg`](configs/ISP.cfg) | Configuración del router ISP |
+| [`configs/SW1.cfg`](configs/SW1.cfg) | Configuración del switch LAN |
+| [`configs/PC1-LAN.cfg`](configs/PC1-LAN.cfg) | Configuración de la PC interna |
+| [`configs/KALI-LINUX-CLIENT.cfg`](configs/KALI-LINUX-CLIENT.cfg) | Configuración del cliente Kali Linux |
+
+---
 
 ## Estructura del repositorio
 
@@ -289,20 +310,22 @@ VPN-L2TP-LinuxClient-IKEv1-IPSec/
 |   |-- Documentacion Tecnica Profesional.docx
 |
 |-- images/
-|   |-- 01_topologia_completa.png
-|   |-- 02_r1_show_ip_interface_brief.png
-|   |-- 03_r1_show_crypto_isakmp_sa.png
-|   |-- 04_r1_show_crypto_ipsec_sa_parte1.png
-|   |-- 05_r1_show_crypto_ipsec_sa_parte2.png
-|   |-- 06_r1_show_crypto_ipsec_sa_parte3.png
-|   |-- 07_r1_show_vpdn_tunnel.png
-|   |-- 08_r1_show_vpdn_session.png
-|   |-- 09_kali_ip_route.png
-|   |-- 10_kali_ping_pc_lan.png
+    |-- 01_topologia_completa.png
+    |-- 02_r1_show_ip_interface_brief.png
+    |-- 03_r1_show_crypto_isakmp_sa.png
+    |-- 04_r1_show_crypto_ipsec_sa_parte1.png
+    |-- 05_r1_show_crypto_ipsec_sa_parte2.png
+    |-- 06_r1_show_crypto_ipsec_sa_parte3.png
+    |-- 07_r1_show_vpdn_tunnel.png
+    |-- 08_r1_show_vpdn_session.png
+    |-- 09_kali_ip_route.png
+    |-- 10_kali_ping_pc_lan.png
 ```
 
-## Conclusion
+---
 
-La practica demuestra una VPN Client-to-Site punto a multipunto usando L2TP sobre IPSec con IKEv1. R1 funciona como servidor VPN, Kali como cliente remoto y PC1 como recurso interno de la LAN.
+## Conclusión
 
-La conexion queda validada porque IKEv1 aparece en `QM_IDLE`, IPSec tiene SAs activas, VPDN muestra tunel y sesion L2TP, Kali recibe una interfaz `ppp0` con IP del pool VPN y el ping hacia `192.168.45.10` responde correctamente.
+La práctica demuestra que un cliente Linux externo puede conectarse de forma segura a una LAN privada mediante una VPN **L2TP sobre IPSec con IKEv1**. R1 funciona como servidor VPN, autentica al usuario, asigna una IP desde el pool, crea la sesión L2TP y permite que Kali acceda a la red interna `192.168.45.0/24`.
+
+Aunque se muestra un solo cliente en la demostración, la configuración es punto a multipunto porque el servidor usa un pool de direcciones, VPDN, Virtual-Template y dynamic crypto map para aceptar múltiples clientes remotos autorizados.
