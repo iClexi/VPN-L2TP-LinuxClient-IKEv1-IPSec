@@ -35,9 +35,6 @@ La documentación técnica profesional está en:
 
 [`docs/Documentacion Tecnica Profesional.pdf`](docs/Documentacion%20Tecnica%20Profesional.pdf)
 
-También se incluye la versión editable:
-
-[`docs/Documentacion Tecnica Profesional.docx`](docs/Documentacion%20Tecnica%20Profesional.docx)
 
 ---
 
@@ -289,38 +286,6 @@ Las configuraciones completas están en la carpeta [`configs/`](configs/) con ex
 | [`configs/KALI-LINUX-CLIENT.cfg`](configs/KALI-LINUX-CLIENT.cfg) | Configuración del cliente Kali Linux |
 
 ---
-
-## Estructura del repositorio
-
-```text
-VPN-L2TP-LinuxClient-IKEv1-IPSec/
-|
-|-- README.md
-|-- MichaelRobles_2025-0845_Links_P1.txt
-|
-|-- configs/
-|   |-- ISP.cfg
-|   |-- KALI-LINUX-CLIENT.cfg
-|   |-- PC1-LAN.cfg
-|   |-- R1-L2TP-SERVER.cfg
-|   |-- SW1.cfg
-|
-|-- docs/
-|   |-- Documentacion Tecnica Profesional.pdf
-|   |-- Documentacion Tecnica Profesional.docx
-|
-|-- images/
-    |-- 01_topologia_completa.png
-    |-- 02_r1_show_ip_interface_brief.png
-    |-- 03_r1_show_crypto_isakmp_sa.png
-    |-- 04_r1_show_crypto_ipsec_sa_parte1.png
-    |-- 05_r1_show_crypto_ipsec_sa_parte2.png
-    |-- 06_r1_show_crypto_ipsec_sa_parte3.png
-    |-- 07_r1_show_vpdn_tunnel.png
-    |-- 08_r1_show_vpdn_session.png
-    |-- 09_kali_ip_route.png
-    |-- 10_kali_ping_pc_lan.png
-```
 
 ---
 
